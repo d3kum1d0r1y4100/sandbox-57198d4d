@@ -1,0 +1,19 @@
+name: Command Dispatch
+on:
+  issue_comment:
+    types: [created]
+
+jobs:
+  run-tests:
+    if: |
+      github.event.issue.pull_request &&
+      contains(github.event.comment.body, '/test')
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          ref: refs/pull/${{ github.event.issue.number }}/head
+      - name: Run validation
+        run: ./scripts/validate.sh
+      - name: Run tests
+        run: npm test
